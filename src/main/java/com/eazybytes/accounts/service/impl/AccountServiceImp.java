@@ -1,6 +1,7 @@
 package com.eazybytes.accounts.service.impl;
 
 import com.eazybytes.accounts.constants.AccountConstants;
+import com.eazybytes.accounts.dto.AccountDTO;
 import com.eazybytes.accounts.dto.CustomerDTO;
 import com.eazybytes.accounts.entity.Account;
 import com.eazybytes.accounts.entity.Customer;
@@ -38,22 +39,45 @@ public class AccountServiceImp implements AccountService {
     @Override
     public CustomerDTO fetchAccount(String mobileNumber) {
         Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
-                () -> new ResourceNotFoundException("Customer with number " , "mobileNumber", mobileNumber));
+                () -> new ResourceNotFoundException("Customer with number ", "mobileNumber", mobileNumber));
 
         Account account = accountRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
-                () -> new ResourceNotFoundException("Account with number " , "customerId", customer.getCustomerId().toString()));
+                () -> new ResourceNotFoundException("Account with number ", "customerId", customer.getCustomerId().toString()));
 
-        CustomerDTO customerDTO =  CustomerMapper.mapToCustomerDTO(customer);
+        CustomerDTO customerDTO = CustomerMapper.mapToCustomerDTO(customer);
         customerDTO.setAccountDTO(AccountMapper.mapToAccountDTO(account));
 
         return customerDTO;
+    }
+
+    @Override
+    public boolean updateAccount(CustomerDTO customerDTO) {
+        boolean isUpdated = false;
+        AccountDTO accountDTO = customerDTO.getAccountDTO();
+        if (accountDTO != null) {
+            Account account = accountRepository.findById(accountDTO.getAccountNumber()).orElseThrow(
+                    () -> new ResourceNotFoundException("Account with number ", "accountNumber", accountDTO.getAccountNumber().toString()));
+
+            AccountMapper.mapToAccount(accountDTO);
+            account = accountRepository.save(account);
+
+            Long customerId = account.getCustomerId();
+            Customer customer = customerRepository.findById(customerId).orElseThrow(
+                    () -> new ResourceNotFoundException("Customer with number ", "customerId", customerId.toString()));
+
+            CustomerMapper.mapToCustomer(customerDTO);
+            customer = customerRepository.save(customer);
+
+            isUpdated = true;
+        }
+        return isUpdated;
     }
 
     private Account createNewAccount(Customer customer) {
         Account account = new Account();
         account.setCustomerId(customer.getCustomerId());
         long randomAccountNumber = (long) (Math.random() * 1000000000);
-        account.setAccountNumber(String.valueOf(randomAccountNumber));
+        account.setAccountNumber(randomAccountNumber);
         account.setAccountType(AccountConstants.SAVING);
         account.setBranchAddress(AccountConstants.ADDRESS);
         account.setCreatedAt(LocalDateTime.now());
@@ -61,5 +85,13 @@ public class AccountServiceImp implements AccountService {
         return account;
     }
 
+    @Override
+    public boolean deleteAccount(String mobileNumber) {
+      Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+              () -> new ResourceNotFoundException("Customer with number ", "mobileNumber", mobileNumber));
+      accountRepository.deleteByCustomerId(customer.getCustomerId());
+      customerRepository.deleteById(customer.getCustomerId());
+      return true;
+    }
 
 }
