@@ -5,11 +5,12 @@ import com.eazybytes.accounts.dto.CustomerDTO;
 import com.eazybytes.accounts.entity.Account;
 import com.eazybytes.accounts.entity.Customer;
 import com.eazybytes.accounts.exception.CustomerAlreadyExistsException;
+import com.eazybytes.accounts.exception.ResourceNotFoundException;
+import com.eazybytes.accounts.mapper.AccountMapper;
 import com.eazybytes.accounts.mapper.CustomerMapper;
 import com.eazybytes.accounts.repository.AccountRepository;
 import com.eazybytes.accounts.repository.CustomerRepository;
 import com.eazybytes.accounts.service.AccountService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,20 @@ public class AccountServiceImp implements AccountService {
         accountRepository.save(createNewAccount(savedCustomer));
     }
 
+    @Override
+    public CustomerDTO fetchAccount(String mobileNumber) {
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Customer with number " , "mobileNumber", mobileNumber));
+
+        Account account = accountRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
+                () -> new ResourceNotFoundException("Account with number " , "customerId", customer.getCustomerId().toString()));
+
+        CustomerDTO customerDTO =  CustomerMapper.mapToCustomerDTO(customer);
+        customerDTO.setAccountDTO(AccountMapper.mapToAccountDTO(account));
+
+        return customerDTO;
+    }
+
     private Account createNewAccount(Customer customer) {
         Account account = new Account();
         account.setCustomerId(customer.getCustomerId());
@@ -45,4 +60,6 @@ public class AccountServiceImp implements AccountService {
         account.setCreatedBy("Anonymous");
         return account;
     }
+
+
 }
