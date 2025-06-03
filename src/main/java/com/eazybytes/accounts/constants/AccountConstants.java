@@ -21,6 +21,9 @@ public class AccountConstants {
     public static final String STATUS_409 = "409";
     public static final String MESSAGE_409 = "Account already exists";
 
+    public static final String STATUS_417 = "417";
+    public static final String MESSAGE_417_UPDATE = "Account not updated";
+
     public static final String STATUS_500 = "500";
     public static final String MESSAGE_500 = "Internal server error";
 }

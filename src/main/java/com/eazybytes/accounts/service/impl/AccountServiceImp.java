@@ -15,8 +15,8 @@ import com.eazybytes.accounts.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +34,21 @@ public class AccountServiceImp implements AccountService {
         }
         Customer savedCustomer = customerRepository.save(customer);
         accountRepository.save(createNewAccount(savedCustomer));
+    }
+
+    private Account createNewAccount(Customer customer) {
+        Account account = new Account();
+        account.setCustomerId(customer.getCustomerId());
+        long randomAccNumber = 1000000000L + new Random().nextInt(900000000);
+
+        account.setAccountNumber(randomAccNumber);
+        account.setAccountType(AccountConstants.SAVING);
+        account.setBranchAddress(AccountConstants.ADDRESS);
+
+        // Setter non più necessari
+        // account.setCreatedAt(LocalDateTime.now());
+        // account.setCreatedBy("Anonymous");
+        return account;
     }
 
     @Override
@@ -73,18 +88,6 @@ public class AccountServiceImp implements AccountService {
         return isUpdated;
     }
 
-    private Account createNewAccount(Customer customer) {
-        Account account = new Account();
-        account.setCustomerId(customer.getCustomerId());
-        long randomAccountNumber = (long) (Math.random() * 1000000000);
-        account.setAccountNumber(randomAccountNumber);
-        account.setAccountType(AccountConstants.SAVING);
-        account.setBranchAddress(AccountConstants.ADDRESS);
-        account.setCreatedAt(LocalDateTime.now());
-        account.setCreatedBy("Anonymous");
-        return account;
-    }
-
     @Override
     public boolean deleteAccount(String mobileNumber) {
       Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
@@ -93,5 +96,4 @@ public class AccountServiceImp implements AccountService {
       customerRepository.deleteById(customer.getCustomerId());
       return true;
     }
-
 }
