@@ -7,11 +7,10 @@ spring:
 
   config:
     import:
-      - "application_qa.yml"
-      - "application_prod.yml"
+      - "application-prod.yml"
+      - "application-qa.yml"
   profiles:
-    active:
-      - "qa"
+    active: qa,prod
 
   datasource:
     url: jdbc:h2:mem:testdb
