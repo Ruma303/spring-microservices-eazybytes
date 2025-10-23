@@ -4,7 +4,7 @@ spring:
       on-profile: "prod"
 
 build:
-  version: "3.0"
+  version: "1.0"
 
 accounts:
   message: "Welcome to EazyBank accounts related prod APIs"
