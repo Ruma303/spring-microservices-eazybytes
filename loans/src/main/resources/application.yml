@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: 8100
 
 spring:
   application:
-    name: "accounts"
+    name: "loans"
   profiles:
     active: "prod"
   config:
