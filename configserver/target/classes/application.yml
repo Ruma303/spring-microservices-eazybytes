@@ -10,4 +10,4 @@ spring:
     config:
       server:
          native:
-            search-location: "classpath:/config"
+            search-location: "file:///Users//ruma//Library//Mobile Documents//com~apple~CloudDocs//Sites//Coding//Spring Boot//Lessons//spring-microservices//config"
