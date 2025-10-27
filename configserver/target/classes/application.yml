@@ -5,9 +5,13 @@ spring:
   application:
     name: "configserver"
   profiles:
-    active: native
+    active: git
   cloud:
     config:
       server:
-         native:
-            search-location: "file:///Users//ruma//Library//Mobile Documents//com~apple~CloudDocs//Sites//Coding//Spring Boot//Lessons//spring-microservices//config"
+         git:
+           uri: https://github.com/Ruma303/spring-microservices-eazybytes-config.git
+           default-label: main
+           timeout: 5
+           clone-on-start: true
+           force-pull: true
