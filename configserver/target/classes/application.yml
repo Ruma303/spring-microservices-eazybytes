@@ -9,6 +9,5 @@ spring:
   cloud:
     config:
       server:
-        git:
          native:
             search-location: "classpath:/config"
