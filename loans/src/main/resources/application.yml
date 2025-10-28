@@ -29,3 +29,9 @@ spring:
       root: INFO
       org.springframework.web: DEBUG
       com.example.accounts: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
