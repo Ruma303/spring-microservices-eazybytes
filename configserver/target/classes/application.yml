@@ -15,3 +15,12 @@ spring:
            timeout: 5
            clone-on-start: true
            force-pull: true
+
+#encrypt:
+#  key: ""
+
+management:
+  endpoints:
+    web:
+      exposure:
+        exclude: encrypt, decrypt

@@ -15,3 +15,13 @@ spring:
            timeout: 5
            clone-on-start: true
            force-pull: true
+
+# Inserito nelle variabili d'ambiente del modulo configserver
+#encrypt:
+#  key: ""
+
+management:
+  endpoints:
+    web:
+      exposure:
+        exclude: encrypt, decrypt
