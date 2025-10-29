@@ -1,10 +1,7 @@
 package com.springmicroservices.accounts.controllers;
 
 import com.springmicroservices.accounts.constants.AccountsConstants;
-import com.springmicroservices.accounts.dto.AccountsContactInfoDto;
-import com.springmicroservices.accounts.dto.CustomerDto;
-import com.springmicroservices.accounts.dto.ErrorResponseDto;
-import com.springmicroservices.accounts.dto.ResponseDto;
+import com.springmicroservices.accounts.dto.*;
 import com.springmicroservices.accounts.service.IAccountsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,12 +13,15 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import static com.springmicroservices.accounts.mapper.AccountsMapper.mapToAccountsContactInfoResponse;
 
 @Tag(
         name = "CRUD REST APIs for Accounts in EazyBank",
@@ -31,6 +31,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class AccountsController {
+
+    @Autowired
+    private AccountsContactInfoDto accountsContactInfoDto;
+
+    @GetMapping("/contact-info")
+    public ResponseEntity<AccountsContactInfoResponse> getContactInfo() {
+        var response = mapToAccountsContactInfoResponse(accountsContactInfoDto);
+        return ResponseEntity.ok(response);
+    }
 
     private final IAccountsService iAccountsService;
 
@@ -44,8 +53,6 @@ public class AccountsController {
     @Autowired
     private Environment environment;
 
-    @Autowired
-    private AccountsContactInfoDto accountsContactInfoDto;
 
     //* REST APIs *//
     @Operation(
@@ -221,28 +228,22 @@ public class AccountsController {
                 );
     }
 
+//    @Operation(
+//            summary = "Get Contact information",
+//            description = "Get Contact information that is deployed into accounts microservice"
+//    )
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "HTTP Status OK"
+//            ),
+//            @ApiResponse(
+//                    responseCode = "500",
+//                    description = "HTTP Status Internal Server Error",
+//                    content = @Content(
+//                            schema = @Schema(implementation = ErrorResponseDto.class)
+//                    )
+//            )
+//    })
 
-    @Operation(
-            summary = "Get Contact information",
-            description = "Get Contact information that is deployed into accounts microservice"
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status OK"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDto.class)
-                    )
-            )
-    })
-    @GetMapping("/contact-info")
-    public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(accountsContactInfoDto);
-    }
 }

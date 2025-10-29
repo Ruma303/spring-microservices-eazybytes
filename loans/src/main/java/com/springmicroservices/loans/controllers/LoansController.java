@@ -1,10 +1,7 @@
 package com.springmicroservices.loans.controllers;
 
 import com.springmicroservices.loans.constants.LoansConstants;
-import com.springmicroservices.loans.dto.ErrorResponseDto;
-import com.springmicroservices.loans.dto.LoansContactInfoDto;
-import com.springmicroservices.loans.dto.LoansDto;
-import com.springmicroservices.loans.dto.ResponseDto;
+import com.springmicroservices.loans.dto.*;
 import com.springmicroservices.loans.service.ILoansService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +20,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+
+import static com.springmicroservices.loans.mapper.LoansMapper.mapToLoansContactInfoResponse;
 
 /**
  * @author Eazy Bytes
@@ -247,10 +247,9 @@ public class LoansController {
             )
     })
     @GetMapping("/contact-info")
-    public ResponseEntity<LoansContactInfoDto> getContactInfo() {
+    public ResponseEntity<LoansContactInfoResponse> getContactInfo() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(loansContactInfoDto);
+                .body(mapToLoansContactInfoResponse(loansContactInfoDto));
     }
-
 }

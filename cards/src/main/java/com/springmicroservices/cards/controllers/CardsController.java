@@ -1,10 +1,7 @@
 package com.springmicroservices.cards.controllers;
 
 import com.springmicroservices.cards.constants.CardsConstants;
-import com.springmicroservices.cards.dto.CardsContactInfoDto;
-import com.springmicroservices.cards.dto.CardsDto;
-import com.springmicroservices.cards.dto.ErrorResponseDto;
-import com.springmicroservices.cards.dto.ResponseDto;
+import com.springmicroservices.cards.dto.*;
 import com.springmicroservices.cards.service.ICardsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,7 +20,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
+import static com.springmicroservices.cards.mapper.CardsMapper.mapToCardsContactInfoResponse;
 
 @Tag(
         name = "CRUD REST APIs for Cards in EazyBank",
@@ -33,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @RequiredArgsConstructor
 @Validated
+@RefreshScope
 public class CardsController {
 
     private ICardsService iCardsService;
@@ -240,9 +240,7 @@ public class CardsController {
             )
     })
     @GetMapping("/contact-info")
-    public ResponseEntity<CardsContactInfoDto> getContactInfo() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(cardsContactInfoDto);
+    public ResponseEntity<CardsContactInfoResponse> getContactInfo() {
+        return ResponseEntity.ok(mapToCardsContactInfoResponse(cardsContactInfoDto));
     }
 }

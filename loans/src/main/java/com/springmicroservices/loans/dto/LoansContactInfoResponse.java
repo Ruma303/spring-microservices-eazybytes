@@ -9,8 +9,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "loans")
-public class LoansContactInfoDto {
+public class LoansContactInfoResponse {
     String message;
     Map<String, String> contactDetails;
     List<String> onCallSupport;

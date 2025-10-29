@@ -1,9 +1,19 @@
 package com.springmicroservices.cards.mapper;
 
+import com.springmicroservices.cards.dto.CardsContactInfoDto;
+import com.springmicroservices.cards.dto.CardsContactInfoResponse;
 import com.springmicroservices.cards.dto.CardsDto;
 import com.springmicroservices.cards.entity.Cards;
 
 public class CardsMapper {
+
+    public static CardsContactInfoResponse mapToCardsContactInfoResponse(CardsContactInfoDto cardsContactInfoDto) {
+        CardsContactInfoResponse response = new CardsContactInfoResponse();
+        response.setContactDetails(cardsContactInfoDto.getContactDetails());
+        response.setMessage(cardsContactInfoDto.getMessage());
+        response.setOnCallSupport(cardsContactInfoDto.getOnCallSupport());
+        return response;
+    }
 
     public static CardsDto mapToCardsDto(Cards cards, CardsDto cardsDto) {
         cardsDto.setCardNumber(cards.getCardNumber());
