@@ -1,5 +1,5 @@
 server:
-  port: 8072
+  port: 8071
 
 spring:
   application:
@@ -16,11 +16,10 @@ spring:
            clone-on-start: true
            force-pull: true
   rabbitmq:
-    host: localhost
+    host: "localhost"
     port: 5672
     username: guest
     password: guest
-
 
 # Inserito nelle variabili d'ambiente del modulo configserver
 #encrypt:
@@ -31,3 +30,7 @@ management:
     web:
       exposure:
         exclude: encrypt, decrypt
+  endpoint:
+    health:
+      probes:
+        enabled: true

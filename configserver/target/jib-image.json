@@ -1,0 +1,1 @@
+{"image":"rumadev/configserver:s6","imageId":"sha256:fb59c4c6c88343ffc7f7f1eb3e5b703f80d3f4e076aa7bc6c0bec5794123feb4","imageDigest":"sha256:bca4ead44fd3fb6a06f34147558296a24b8d7f271fb28f6d54c66aafb91d5f73","tags":["s6"],"imagePushed":false}

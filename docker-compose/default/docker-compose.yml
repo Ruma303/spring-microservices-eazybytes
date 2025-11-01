@@ -1,13 +1,26 @@
 services:
 
+#  hookdeck:
+#    image: hookdeck/hookdeck-cli
+#    container_name: hookdeck-ms
+#    environment:
+#      - HOOKDECK_CLI_KEY=${HOOKDECK_CLI_KEY}     # Variabile d'ambiente locale, non in chiaro
+#    command: >
+#      listen http://host.docker.internal:8071 Source --cli-path /monitor
+#    stdin_open: true
+#    tty: true
+
   rabbit:
-    image: rabbitmq:3.12-management-alpine
+    image: rabbitmq:3.12-management
     container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
+#    depends_on:
+#      hookdeck:
+#          condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:15672"]
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
       # oppure rabbitmq-diagnostic check_port_connectivity
       interval: 10s
       timeout: 5s
@@ -18,12 +31,13 @@ services:
       service: microservice-base-config
 
   configserver:
-    image: "eazybytes/configserver:s6"
+    image: "rumadev/configserver:s6"
     container_name: configserver-ms
+    platform: linux/amd64
     ports:
       - "8071:8071"
     healthcheck:
-      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8071/actuator/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -36,38 +50,50 @@ services:
       service: microservice-base-config
 
   accounts:
-    image: "eazybytes/accounts:s6"
+    image: "rumadev/accounts:s6"
     container_name: accounts-ms
+    platform: linux/amd64
     ports:
       - "8080:8080"
     environment:
       SPRING_APPLICATION_NAME: "accounts"
+    depends_on:
+      configserver:
+        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   cards:
-    image: "eazybytes/cards:s6"
+    image: "rumadev/cards:s6"
     container_name: cards-ms
+    platform: linux/amd64
     ports:
-      - "8100:8100"
+      - "8090:8090"
     environment:
       SPRING_APPLICATION_NAME: "cards"
+    depends_on:
+      configserver:
+        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   loans:
-    image: "eazybytes/loans:s6"
+    image: "rumadev/loans:s6"
     container_name: loans-ms
+    platform: linux/amd64
     ports:
-      - "8090:8090"
+      - "8100:8100"
     environment:
       SPRING_APPLICATION_NAME: "loans"
+    depends_on:
+      configserver:
+        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
 networks:
-  eazybank:
+  rumadev:
     driver: bridge
