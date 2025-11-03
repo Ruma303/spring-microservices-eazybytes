@@ -1,35 +1,5 @@
 services:
 
-#  hookdeck:
-#    image: hookdeck/hookdeck-cli
-#    container_name: hookdeck-ms
-#    environment:
-#      - HOOKDECK_CLI_KEY=${HOOKDECK_CLI_KEY}     # Variabile d'ambiente locale, non in chiaro
-#    command: >
-#      listen http://host.docker.internal:8071 Source --cli-path /monitor
-#    stdin_open: true
-#    tty: true
-
-  rabbit:
-    image: rabbitmq:3.12-management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-#    depends_on:
-#      hookdeck:
-#          condition: service_healthy
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
-      # oppure rabbitmq-diagnostic check_port_connectivity
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 5s
-    extends:
-      file: common-config.yml
-      service: microservice-base-config
-
   configserver:
     image: "rumadev/configserver:s6"
     container_name: configserver-ms
@@ -42,9 +12,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10s
-    depends_on:
-      rabbit:
-        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-base-config
