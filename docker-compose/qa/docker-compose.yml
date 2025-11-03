@@ -1,7 +1,37 @@
 services:
 
+  accountsdb:
+    container_name: accountsdb-ms
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: accountsdb
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+
+  cardsdb:
+    container_name: cardsdb-ms
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: cardsdb
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+
+  loansdb:
+    container_name: loansdb-ms
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: loansdb
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+
   configserver:
-    image: "rumadev/configserver:s6"
+    image: "rumadev/configserver:s7"
     container_name: configserver-ms
     platform: linux/amd64
     ports:
@@ -17,45 +47,54 @@ services:
       service: microservice-base-config
 
   accounts:
-    image: "rumadev/accounts:s6"
+    image: "rumadev/accounts:s7"
     container_name: accounts-ms
     platform: linux/amd64
     ports:
       - "8080:8080"
     environment:
       SPRING_APPLICATION_NAME: "accounts"
+      SPRING_DATASOURCE_URL: jdbc:mysql://accountsdb:3306/accountsdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     depends_on:
       configserver:
+        condition: service_healthy
+      accountsdb:
         condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   cards:
-    image: "rumadev/cards:s6"
+    image: "rumadev/cards:s7"
     container_name: cards-ms
     platform: linux/amd64
     ports:
       - "8090:8090"
     environment:
       SPRING_APPLICATION_NAME: "cards"
+      SPRING_DATASOURCE_URL: jdbc:mysql://cardsdb:3306/cardsdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     depends_on:
       configserver:
+        condition: service_healthy
+      cardsdb:
         condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   loans:
-    image: "rumadev/loans:s6"
+    image: "rumadev/loans:s7"
     container_name: loans-ms
     platform: linux/amd64
     ports:
       - "8100:8100"
     environment:
       SPRING_APPLICATION_NAME: "loans"
+      SPRING_DATASOURCE_URL: jdbc:mysql://loansdb:3306/loansdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     depends_on:
       configserver:
+        condition: service_healthy
+      loansdb:
         condition: service_healthy
     extends:
       file: common-config.yml
