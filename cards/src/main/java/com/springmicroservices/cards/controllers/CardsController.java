@@ -35,7 +35,7 @@ import static com.springmicroservices.cards.mapper.CardsMapper.mapToCardsContact
 @RefreshScope
 public class CardsController {
 
-    private ICardsService iCardsService;
+    private final ICardsService iCardsService;
 
     @Value("${build.version:1.0.0}")
     private String buildVersion;

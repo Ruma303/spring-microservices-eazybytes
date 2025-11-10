@@ -50,5 +50,4 @@ public class CardsDto {
             description = "Total available amount against a card", example = "90000"
     )
     private int availableAmount;
-
 }

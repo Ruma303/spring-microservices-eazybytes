@@ -20,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import static com.springmicroservices.loans.mapper.LoansMapper.mapToLoansContactInfoResponse;
 
@@ -38,7 +37,7 @@ import static com.springmicroservices.loans.mapper.LoansMapper.mapToLoansContact
 @Validated
 public class LoansController {
 
-    private ILoansService iLoansService;
+    private final ILoansService iLoansService;
 
     @Value("${build.version:1.0.0}")
     private String buildVersion;
