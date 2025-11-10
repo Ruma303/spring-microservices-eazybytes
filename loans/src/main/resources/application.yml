@@ -54,6 +54,8 @@ eureka:
   instance:
     prefer-ip-address: true
   client:
+    leaseRenewalIntervalInSeconds: 30  # default 30
+    leaseExpirationDurationInSeconds: 90 # default 90
     fetch-registry: true
     register-with-eureka: true
     service-url:
