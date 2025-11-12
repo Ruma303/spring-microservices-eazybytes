@@ -3,11 +3,15 @@
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/configs/AccountsConfig.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/constants/AccountsConstants.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/controllers/AccountsController.java
+/Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/controllers/CustomerController.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/dto/AccountsContactInfoDto.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/dto/AccountsContactInfoResponse.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/dto/AccountsDto.java
+/Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/dto/CardsDto.java
+/Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/dto/CustomerDetailsDto.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/dto/CustomerDto.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/dto/ErrorResponseDto.java
+/Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/dto/LoansDto.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/dto/ResponseDto.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/entity/Accounts.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/entity/BaseEntity.java
@@ -20,4 +24,8 @@
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/repository/AccountsRepository.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/repository/CustomerRepository.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/service/IAccountsService.java
+/Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/service/ICustomerService.java
+/Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/service/client/CardsFeignClient.java
+/Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/service/client/LoansFeignClient.java
 /Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/service/impl/AccountsServiceImpl.java
+/Users/ruma/Library/Mobile Documents/com~apple~CloudDocs/Sites/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/service/impl/CustomerServiceImpl.java

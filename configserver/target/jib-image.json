@@ -1,1 +1,1 @@
-{"image":"rumadev/configserver:s7","imageId":"sha256:2c3e1d96c4128764719f842baf65b176c2c5ebb382993d77d6f251127166403d","imageDigest":"sha256:31f65eba038cad6e30cc3263207951f1610c6a4f3c45ea84ab2acf1397ad7bc2","tags":["s7"],"imagePushed":false}
+{"image":"rumadev/configserver:s8","imageId":"sha256:0f103deb0e68dd9c6eae96745ef0222b86677a2b6da5b347282d493cfa72f68c","imageDigest":"sha256:c2d3ab686b1a8cec3424beec044713134d1f17a7aafe5542491eede0e2378a80","tags":["s8"],"imagePushed":false}
