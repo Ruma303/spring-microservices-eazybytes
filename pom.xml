@@ -10,5 +10,8 @@
         <module>accounts</module>
         <module>cards</module>
         <module>loans</module>
+        <module>eurekaserver</module>
+        <module>gatewayserver</module>
+        <module>configserver</module>
     </modules>
 </project>
