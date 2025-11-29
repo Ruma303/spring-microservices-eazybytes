@@ -25,7 +25,14 @@ management:
     web:
       exposure:
         exclude: encrypt, decrypt
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
   endpoint:
-    health:
-      probes:
-        enabled: true
+    shutdown:
+      enabled: true
+      health:
+        probes:
+          enabled: true

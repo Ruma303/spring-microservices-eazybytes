@@ -1,7 +1,7 @@
 services:
 
   configserver:
-    image: "rumadev/configserver:s8"
+    image: "rumadev/configserver:s9"
     container_name: configserver-ms
     platform: linux/amd64
     ports:
@@ -17,7 +17,7 @@ services:
       service: microservice-base-config
 
   eurekaserver:
-    image: "rumadev/eurekaserver:s8"
+    image: "rumadev/eurekaserver:s9"
     container_name: eurekaserver-ms
     platform: linux/amd64
     ports:
@@ -35,11 +35,17 @@ services:
       service: microservice-base-config
 
   accounts:
-    image: "rumadev/accounts:s8"
+    image: "rumadev/accounts:s9"
     container_name: accounts-ms
     platform: linux/amd64
     ports:
       - "8080:8080"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: "accounts"
     extends:
@@ -47,11 +53,17 @@ services:
       service: microservice-configserver-config
 
   cards:
-    image: "rumadev/cards:s8"
+    image: "rumadev/cards:s9"
     container_name: cards-ms
     platform: linux/amd64
     ports:
       - "8090:8090"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8090/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: "cards"
     extends:
@@ -59,13 +71,48 @@ services:
       service: microservice-configserver-config
 
   loans:
-    image: "rumadev/loans:s8"
+    image: "rumadev/loans:s9"
     container_name: loans-ms
     platform: linux/amd64
     ports:
       - "8100:8100"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8100/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: "loans"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+  gatewayserver:
+    image: "rumadev/gatewayserver:s9"
+    container_name: gatewayserver-ms
+    platform: linux/amd64
+    ports:
+      - "8072:8072"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      accounts:
+        condition: service_healthy
+      cards:
+        condition: service_healthy
+      loans:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "gatewayserver"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8072/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     extends:
       file: common-config.yml
       service: microservice-configserver-config
