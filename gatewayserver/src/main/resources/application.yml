@@ -1,3 +1,6 @@
+server:
+  port: 8072
+
 spring:
   application:
     name: "gatewayserver"
@@ -11,12 +14,24 @@ spring:
             locator:
               enabled: true
               lowerCaseServiceId: true
+          httpclient:
+            connect-timeout: 1000           # 1 secondo per stabilire connessione
+            response-timeout: 2s            # 2 secondi per ricevere risposta
+#      # Esempio di disabilitazione timeout di risposta globale per singole rotte
+#      routes:
+#        - id: per_route_timeouts
+#          uri: http://localhost:8072/eazybank/loans/api/contact-info
+#          predicates:
+#            - Path=/delay/{timeout}
+#          metadata:
+#            connect-timeout: 2000       # in ms
+#            response-timeout: 200      # in ms
 
 management:
   endpoints:
     web:
       exposure:
-        exclude: encrypt, decrypt
+        include: "*"
   endpoint:
     shutdown:
       access: unrestricted
@@ -50,3 +65,11 @@ info:
 logging:
   level:
     com.springmicroservices.accounts: DEBUG
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 2
+      failureRateThreshold: 50
+      waitDurationInOpenState: 10000

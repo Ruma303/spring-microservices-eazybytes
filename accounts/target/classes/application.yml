@@ -8,6 +8,10 @@ spring:
     active: "prod"
   config:
     import: "optional:configserver:http://localhost:8071"
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
@@ -33,6 +37,7 @@ spring:
       org.springframework.web: DEBUG
       com.example.accounts: DEBUG
       com.netflix.discovery: DEBUG
+
 
 management:
   endpoints:
@@ -72,3 +77,15 @@ info:
 logging:
   level:
     com.springmicroservices.accounts: DEBUG
+
+feign:
+  circuitbreaker:
+    enabled: true
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 2
+      failureRateThreshold: 50
+      waitDurationInOpenState: 10000
