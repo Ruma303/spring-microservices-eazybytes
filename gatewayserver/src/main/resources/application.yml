@@ -21,10 +21,10 @@ spring:
   # Redis
   data:
     redis:
-      connect-timeout: 2s
-      host: localhost
-      port: 6379
-      timeout: 1s
+      connect-timeout: ${SPRING_DATA_REDIS_CONNECTION_TIMEOUT:2s}
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      timeout: ${SPRING_DATA_REDIS_TIMEOUT:1s}
 
 management:
   endpoints:

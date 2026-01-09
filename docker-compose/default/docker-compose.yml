@@ -1,7 +1,19 @@
 services:
 
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      timeout: 10s
+      retries: 10
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
   configserver:
-    image: "rumadev/configserver:s9"
+    image: "rumadev/configserver:s10"
     container_name: configserver-ms
     platform: linux/amd64
     ports:
@@ -17,7 +29,7 @@ services:
       service: microservice-base-config
 
   eurekaserver:
-    image: "rumadev/eurekaserver:s9"
+    image: "rumadev/eurekaserver:s10"
     container_name: eurekaserver-ms
     platform: linux/amd64
     ports:
@@ -35,7 +47,7 @@ services:
       service: microservice-base-config
 
   accounts:
-    image: "rumadev/accounts:s9"
+    image: "rumadev/accounts:s10"
     container_name: accounts-ms
     platform: linux/amd64
     ports:
@@ -53,7 +65,7 @@ services:
       service: microservice-configserver-config
 
   cards:
-    image: "rumadev/cards:s9"
+    image: "rumadev/cards:s10"
     container_name: cards-ms
     platform: linux/amd64
     ports:
@@ -71,7 +83,7 @@ services:
       service: microservice-configserver-config
 
   loans:
-    image: "rumadev/loans:s9"
+    image: "rumadev/loans:s10"
     container_name: loans-ms
     platform: linux/amd64
     ports:
@@ -89,7 +101,7 @@ services:
       service: microservice-configserver-config
 
   gatewayserver:
-    image: "rumadev/gatewayserver:s9"
+    image: "rumadev/gatewayserver:s10"
     container_name: gatewayserver-ms
     platform: linux/amd64
     ports:
@@ -105,8 +117,14 @@ services:
         condition: service_healthy
       loans:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "gatewayserver"
+      SPRING_DATA_REDIS_CONNECTION_TIMEOUT: 2s
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_TIMEOUT: 1s
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8072/actuator/health || exit 1" ]
       interval: 10s
