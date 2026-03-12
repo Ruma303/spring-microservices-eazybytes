@@ -111,7 +111,7 @@ services:
     command: -config.file /etc/tempo-config.yml
     ports:
       - "3110:3100"
-      - "4318:4318"
+      - "4317:4317"
     volumes:
       - ../observability/tempo/tempo.yaml:/etc/tempo-config.yml
     extends:
@@ -126,11 +126,11 @@ services:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
     depends_on:
       - gateway
-#    entrypoint:
-#      - sh
-#      - -euc
-#      - |
-#        /run.sh
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        /run.sh
     ports:
       - "3000:3000"
     volumes:
@@ -243,6 +243,8 @@ services:
     extends:
       file: common-config.yml
       service: microservice-base-config
+    environment:
+      OTEL_SERVICE_NAME: "configserver"
 
   eurekaserver:
     image: "rumadev/eurekaserver:s11"
@@ -252,6 +254,7 @@ services:
       - "8070:8070"
     environment:
       SPRING_APPLICATION_NAME: "eurekaserver"
+      OTEL_SERVICE_NAME: "eurekaserver"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8070/actuator/health || exit 1" ]
       interval: 10s
@@ -276,6 +279,7 @@ services:
       start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: "accounts"
+      OTEL_SERVICE_NAME: "accounts"
     extends:
       file: common-config.yml
       service: microservice-configserver-config
@@ -294,6 +298,7 @@ services:
       start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: "cards"
+      OTEL_SERVICE_NAME: "cards"
     extends:
       file: common-config.yml
       service: microservice-configserver-config
@@ -312,6 +317,7 @@ services:
       start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: "loans"
+      OTEL_SERVICE_NAME: "loans"
     extends:
       file: common-config.yml
       service: microservice-configserver-config
@@ -335,6 +341,7 @@ services:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "gatewayserver"
+      OTEL_SERVICE_NAME: "gatewayserver"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8072/actuator/health || exit 1" ]
       interval: 10s

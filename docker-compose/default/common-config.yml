@@ -4,7 +4,6 @@ services:
     networks:
       - rumadev
 
-  # Per Config Server
   microservice-base-config:
     extends:
       service: network-deploy-service
@@ -12,6 +11,10 @@ services:
       resources:
         limits:
           memory: 700M
+    environment:
+      JAVA_TOOL_OPTIONS: "-javaagent:/app/libs/opentelemetry-javaagent-2.12.0.jar"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
+      OTEL_METRICS_EXPORTER: none
 
   # Per altri microservizi
   microservice-configserver-config:

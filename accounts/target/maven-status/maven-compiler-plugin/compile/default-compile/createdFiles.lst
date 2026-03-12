@@ -9,6 +9,8 @@ com/springmicroservices/accounts/dto/CardsDto.class
 com/springmicroservices/accounts/entity/Accounts.class
 com/springmicroservices/accounts/exception/ResourceNotFoundException.class
 com/springmicroservices/accounts/AccountsApplication.class
+com/springmicroservices/accounts/service/client/LoansFallback.class
+com/springmicroservices/accounts/service/client/CardsFallback.class
 com/springmicroservices/accounts/mapper/CustomerMapper.class
 com/springmicroservices/accounts/service/impl/CustomerServiceImpl.class
 com/springmicroservices/accounts/dto/AccountsContactInfoResponse.class
