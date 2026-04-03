@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SpringBootMicroservicesServices" type="CompoundRunConfigurationType">
+    <toRun name="ConfigServer" type="SpringBootApplicationConfigurationType" />
+    <toRun name="EurekaServer" type="SpringBootApplicationConfigurationType" />
+    <toRun name="Accounts" type="SpringBootApplicationConfigurationType" />
+    <toRun name="Cards" type="SpringBootApplicationConfigurationType" />
+    <toRun name="Loans" type="SpringBootApplicationConfigurationType" />
+    <toRun name="GatewayServer" type="SpringBootApplicationConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

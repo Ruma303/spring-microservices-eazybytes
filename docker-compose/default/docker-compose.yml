@@ -1,17 +1,18 @@
 services:
-
-# DEPRECATO
-#  promtail:
-#    image: grafana/promtail:v2.9.8 # Non più disponibile
-#    volumes:
-#      - ../observability/promtail/promtail-local-config.yaml:/etc/promtail/config.yaml:ro
-#      - /var/run/docker.sock:/var/run/docker.sock
-#    command: -config.file=/etc/promtail/config.yml
-#    depends_on:
-#      - gateway
-#    extends:
-#      file: common-config.yml
-#      service: network-deploy-service
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.7
+    container_name: keycloak-ms
+    ports:
+      - "127.0.0.1:7080:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: "admin"
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "admin"
+    command: "start-dev"
+    volumes:
+      - ./keycloak-data/h2:/opt/keycloak/data/h2
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
 
   read:
     image: grafana/loki:3.6.2
@@ -108,10 +109,15 @@ services:
   tempo:
     image: grafana/tempo:2.9.0
     container_name: tempo
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     command: -config.file /etc/tempo-config.yml
     ports:
       - "3110:3100"
-      - "4317:4317"
+      - "4318:4317"
     volumes:
       - ../observability/tempo/tempo.yaml:/etc/tempo-config.yml
     extends:
@@ -229,25 +235,26 @@ services:
       service: network-deploy-service
 
   configserver:
-    image: "rumadev/configserver:s11"
+    image: "rumadev/configserver:s12"
     container_name: configserver-ms
     platform: linux/amd64
     ports:
       - "8071:8071"
+    environment:
+      SPRING_APPLICATION_NAME: "configserver"
+      OTEL_SERVICE_NAME: "configserver"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8071/actuator/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 10s
+      start_period: 180s
     extends:
       file: common-config.yml
       service: microservice-base-config
-    environment:
-      OTEL_SERVICE_NAME: "configserver"
 
   eurekaserver:
-    image: "rumadev/eurekaserver:s11"
+    image: "rumadev/eurekaserver:s12"
     container_name: eurekaserver-ms
     platform: linux/amd64
     ports:
@@ -260,74 +267,102 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 10s
+      start_period: 180s
     extends:
       file: common-config.yml
       service: microservice-base-config
 
   accounts:
-    image: "rumadev/accounts:s11"
+    image: "rumadev/accounts:s12"
     container_name: accounts-ms
     platform: linux/amd64
-    ports:
-      - "8080:8080"
-    healthcheck:
-      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
+#    ports:
+#      - "8080:8080"
     environment:
       SPRING_APPLICATION_NAME: "accounts"
       OTEL_SERVICE_NAME: "accounts"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0"
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+          cpus: "1.0"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+      start_period: 180s
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   cards:
-    image: "rumadev/cards:s11"
+    image: "rumadev/cards:s12"
     container_name: cards-ms
     platform: linux/amd64
-    ports:
-      - "8090:8090"
-    healthcheck:
-      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8090/actuator/health || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
+#    ports:
+#      - "8090:8090"
     environment:
       SPRING_APPLICATION_NAME: "cards"
       OTEL_SERVICE_NAME: "cards"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0"
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+          cpus: "1.0"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8090/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+      start_period: 180s
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   loans:
-    image: "rumadev/loans:s11"
+    image: "rumadev/loans:s12"
     container_name: loans-ms
     platform: linux/amd64
-    ports:
-      - "8100:8100"
-    healthcheck:
-      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8100/actuator/health || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
+#    ports:
+#      - "8100:8100"
     environment:
       SPRING_APPLICATION_NAME: "loans"
       OTEL_SERVICE_NAME: "loans"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0"
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+          cpus: "1.0"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8100/actuator/health || exit 1" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+      start_period: 180s
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   gatewayserver:
-    image: "rumadev/gatewayserver:s11"
+    image: "rumadev/gatewayserver:s12"
     container_name: gatewayserver-ms
     platform: linux/amd64
     ports:
       - "8072:8072"
+    environment:
+      SPRING_APPLICATION_NAME: "gatewayserver"
+      OTEL_SERVICE_NAME: "gatewayserver"
+
+      # Opzione da documentazione
+      # SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: "http://keycloak:8080/realms/master/protocol/openid-connect/certs"
+
+      # Noi useremo una nostra ENV personalizzata
+      JWK_SET_URI: "http://keycloak:8080/realms/master/protocol/openid-connect/certs"
+
     depends_on:
       configserver:
         condition: service_healthy
@@ -339,15 +374,12 @@ services:
         condition: service_healthy
       loans:
         condition: service_healthy
-    environment:
-      SPRING_APPLICATION_NAME: "gatewayserver"
-      OTEL_SERVICE_NAME: "gatewayserver"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8072/actuator/health || exit 1" ]
-      interval: 10s
+      interval: 20s
       timeout: 5s
       retries: 10
-      start_period: 10s
+      start_period: 180s
     extends:
       file: common-config.yml
       service: microservice-configserver-config
