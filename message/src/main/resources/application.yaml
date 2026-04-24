@@ -1,0 +1,11 @@
+server:
+  port: 9010
+
+spring:
+  application:
+    name: message
+  cloud:
+    function:
+      # Definiamo quali funzioni devono essere caricate e rese disponibili
+      # È possibile concatenarle con pipe (|) o elencarle separate da punto e virgola
+      definition: email|sms
