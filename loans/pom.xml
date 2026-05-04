@@ -132,7 +132,7 @@
     <version>3.4.2</version>
     <configuration>
         <to>
-            <image>rumadev/${project.artifactId}:s12</image>
+            <image>rumadev/${project.artifactId}:s13</image>
         </to>
         <container>
             <jvmFlags>

@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Accounts extends  BaseEntity {
+public class Accounts extends BaseEntity {
 
     @Column(name="customer_id")
     private Long customerId;
@@ -23,4 +23,7 @@ public class Accounts extends  BaseEntity {
 
     @Column(name="branch_address")
     private String branchAddress;
+
+    @Column(name="communication_sw")
+    private Boolean communicationSw;
 }
