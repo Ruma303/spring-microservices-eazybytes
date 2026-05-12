@@ -1,10 +1,10 @@
-2026-05-12 17:41:30.822249Z jdbc[3]: exception
+2026-04-03 19:04:30.911072Z jdbc[3]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "MIGRATION_MODEL" not found (this database is empty); SQL statement:
 SELECT ID, VERSION FROM MIGRATION_MODEL ORDER BY UPDATE_TIME DESC [42104-230]
-2026-05-12 17:41:31.477637Z jdbc[4]: exception
+2026-04-03 19:04:32.248345Z jdbc[4]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "DATABASECHANGELOGLOCK" not found; SQL statement:
 SELECT COUNT(*) FROM PUBLIC.DATABASECHANGELOGLOCK [42102-230]
-2026-05-12 17:41:32.865015Z jdbc[3]: exception
+2026-04-03 19:04:36.810366Z jdbc[3]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "T.DETAILS_JSON" not found; SQL statement:
 select t.DETAILS_JSON from PUBLIC.ADMIN_EVENT_ENTITY t where 0=1 [42122-230]
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)

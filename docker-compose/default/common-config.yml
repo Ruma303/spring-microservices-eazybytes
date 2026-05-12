@@ -2,7 +2,7 @@ services:
 
   network-deploy-service:
     networks:
-      - rumadev
+      - eazybytes-ms-nw
 
   microservice-base-config:
     extends:
@@ -10,13 +10,13 @@ services:
     deploy:
       resources:
         limits:
-          memory: 700M
+          memory: 1G
     environment:
       JAVA_TOOL_OPTIONS: "-javaagent:/app/libs/opentelemetry-javaagent-2.12.0.jar"
       OTEL_METRICS_EXPORTER: none
       OTEL_LOGS_EXPORTER: "none"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo:4318"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo:4317"
 
   # Per altri microservizi
   microservice-configserver-config:

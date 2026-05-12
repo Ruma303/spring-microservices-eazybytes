@@ -1,5 +1,6 @@
 com/springmicroservices/accounts/exception/CustomerAlreadyExistsException.class
 com/springmicroservices/accounts/configs/AccountsConfig.class
+com/springmicroservices/accounts/functions/AccountsFunctions.class
 com/springmicroservices/accounts/constants/AccountsConstants.class
 com/springmicroservices/accounts/dto/CustomerDetailsDto.class
 com/springmicroservices/accounts/dto/CustomerDto.class

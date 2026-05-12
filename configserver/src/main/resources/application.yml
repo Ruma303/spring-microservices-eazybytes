@@ -10,15 +10,13 @@ spring:
     config:
       server:
          git:
-           uri: https://github.com/Ruma303/spring-microservices-eazybytes-config.git
+           uri: ${GIT_CONFIG_REPO_URI}
+           username: ${GIT_CONFIG_REPO_USERNAME}
+           password: ${GIT_CONFIG_REPO_TOKEN}
            default-label: main
            timeout: 5
            clone-on-start: true
            force-pull: true
-
-# Inserito nelle variabili d'ambiente del modulo configserver
-#encrypt:
-#  key: ""
 
 management:
   endpoints:

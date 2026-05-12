@@ -20,6 +20,7 @@
 /data/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/exception/CustomerAlreadyExistsException.java
 /data/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/exception/GlobalExceptionHandler.java
 /data/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/exception/ResourceNotFoundException.java
+/data/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/functions/AccountsFunctions.java
 /data/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/mapper/AccountsMapper.java
 /data/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/mapper/CustomerMapper.java
 /data/Coding/Spring Boot/Lessons/spring-microservices/accounts/src/main/java/com/springmicroservices/accounts/repository/AccountsRepository.java
