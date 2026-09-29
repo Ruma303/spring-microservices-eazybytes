@@ -39,9 +39,9 @@ public class AccountsServiceImpl implements IAccountsService {
     public void createAccount(CustomerDto customerDto) {
         Customer customer = CustomerMapper.mapToCustomer(customerDto, new Customer());
         Optional<Customer> optionalCustomer = customerRepository.findByMobileNumber(customerDto.getMobileNumber());
-        if(optionalCustomer.isPresent()) {
+        if (optionalCustomer.isPresent()) {
             throw new CustomerAlreadyExistsException("Customer already registered with given mobileNumber "
-                    +customerDto.getMobileNumber());
+                    + customerDto.getMobileNumber());
         }
         Customer savedCustomer = customerRepository.save(customer);
         Accounts savedAccount = accountsRepository.save(createNewAccount(savedCustomer));
@@ -85,68 +85,68 @@ public class AccountsServiceImpl implements IAccountsService {
                 () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
         );
         Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
-                () -> new ResourceNotFoundException("Account", "customerId", customer.getCustomerId().toString())
+                () -> new ResourceNotFoundException("Account", "customerId", String.valueOf(customer.getCustomerId()))
         );
         CustomerDto customerDto = CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
         customerDto.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts, new AccountsDto()));
         return customerDto;
     }
 
-    /**
-     * @param customerDto - CustomerDto Object
-     * @return boolean indicating if the update of Account details is successful or not
-     */
-    @Override
-    public boolean updateAccount(CustomerDto customerDto) {
-        boolean isUpdated = false;
-        AccountsDto accountsDto = customerDto.getAccountsDto();
-        if(accountsDto !=null ){
-            Accounts accounts = accountsRepository.findById(accountsDto.getAccountNumber()).orElseThrow(
-                    () -> new ResourceNotFoundException("Account", "AccountNumber", accountsDto.getAccountNumber().toString())
-            );
-            AccountsMapper.mapToAccounts(accountsDto, accounts);
-            accounts = accountsRepository.save(accounts);
+        /**
+         * @param customerDto - CustomerDto Object
+         * @return boolean indicating if the update of Account details is successful or not
+         */
+        @Override
+        public boolean updateAccount (CustomerDto customerDto){
+            boolean isUpdated = false;
+            AccountsDto accountsDto = customerDto.getAccountsDto();
+            if (accountsDto != null) {
+                Accounts accounts = accountsRepository.findById(accountsDto.getAccountNumber()).orElseThrow(
+                        () -> new ResourceNotFoundException("Account", "AccountNumber", String.valueOf(accountsDto.getAccountNumber()))
+                );
+                AccountsMapper.mapToAccounts(accountsDto, accounts);
+                accounts = accountsRepository.save(accounts);
 
-            Long customerId = accounts.getCustomerId();
-            Customer customer = customerRepository.findById(customerId).orElseThrow(
-                    () -> new ResourceNotFoundException("Customer", "CustomerID", customerId.toString())
-            );
-            CustomerMapper.mapToCustomer(customerDto,customer);
-            customerRepository.save(customer);
-            isUpdated = true;
+                Long customerId = accounts.getCustomerId();
+                Customer customer = customerRepository.findById(customerId).orElseThrow(
+                        () -> new ResourceNotFoundException("Customer", "CustomerID", String.valueOf(customerId))
+                );
+                CustomerMapper.mapToCustomer(customerDto, customer);
+                customerRepository.save(customer);
+                isUpdated = true;
+            }
+            return isUpdated;
         }
-        return  isUpdated;
-    }
 
-    /**
-     * @param mobileNumber - Input Mobile Number
-     * @return boolean indicating if the delete of Account details is successful or not
-     */
-    @Override
-    public boolean deleteAccount(String mobileNumber) {
-        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
-                () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
-        );
-        accountsRepository.deleteByCustomerId(customer.getCustomerId());
-        customerRepository.deleteById(customer.getCustomerId());
-        return true;
-    }
+        /**
+         * @param mobileNumber - Input Mobile Number
+         * @return boolean indicating if the delete of Account details is successful or not
+         */
+        @Override
+        public boolean deleteAccount (String mobileNumber){
+            Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                    () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
+            );
+            accountsRepository.deleteByCustomerId(customer.getCustomerId());
+            customerRepository.deleteById(customer.getCustomerId());
+            return true;
+        }
 
-    /**
-     * @param accountNumber
-     * @return
-     */
-    @Override
-    public boolean updateCommunicationStatus(Long accountNumber) {
-       boolean isUpdated = false;
-       if (accountNumber != null) {
-           Accounts accounts = accountsRepository.findById(accountNumber).orElseThrow(
-                   () -> new ResourceNotFoundException("Account", "AccountNumber", accountNumber.toString())
-           );
-            accounts.setCommunicationSw(true);
-            accountsRepository.save(accounts);
-            isUpdated = true;
-       }
-       return isUpdated;
+        /**
+         * @param accountNumber
+         * @return
+         */
+        @Override
+        public boolean updateCommunicationStatus (Long accountNumber){
+            boolean isUpdated = false;
+            if (accountNumber != null) {
+                Accounts accounts = accountsRepository.findById(accountNumber).orElseThrow(
+                        () -> new ResourceNotFoundException("Account", "AccountNumber", String.valueOf(accountNumber))
+                );
+                accounts.setCommunicationSw(true);
+                accountsRepository.save(accounts);
+                isUpdated = true;
+            }
+            return isUpdated;
+        }
     }
-}

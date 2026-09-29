@@ -1,6 +1,6 @@
 package com.springmicroservices.message.functions;
 
-import com.springmicroservices.message.dto.AccountsMessageDto;
+import com.springmicroservices.message.dto.AccountsMsgDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -14,18 +14,25 @@ public class MessageFunctions {
     private static final Logger log = LoggerFactory.getLogger(MessageFunctions.class);
 
     @Bean
-    public Function<AccountsMessageDto, AccountsMessageDto> email() {
+    public Function<AccountsMsgDto, AccountsMsgDto> email() {
         return accountMsgDto -> {
-            log.info("Sending email to {}", accountMsgDto.toString());
+            // Posizionare il Lambda Breakpoint sulla riga sottostante
+            log.info("Processing email dispatch for account: {}", accountMsgDto.accountNumber());
             return accountMsgDto;
         };
     }
 
     @Bean
-    public Function<AccountsMessageDto, Long> sms() {
+    public Function<AccountsMsgDto, AccountsMsgDto> sms() {
         return accountMsgDto -> {
-            log.info("Sending sms to {}", accountMsgDto.toString());
-            return accountMsgDto.accountNumber();
+            // Posizionare il Lambda Breakpoint sulla riga sottostante
+            log.info("Processing SMS dispatch for account: {}", accountMsgDto.accountNumber());
+            return new AccountsMsgDto(
+                    accountMsgDto.accountNumber(),
+                    accountMsgDto.name(),
+                    accountMsgDto.email(),
+                    accountMsgDto.mobileNumber()
+            );
         };
     }
 }

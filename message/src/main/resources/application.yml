@@ -4,21 +4,55 @@ server:
 spring:
   application:
     name: "message"
+  config:
+    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://configserver:8071}
   cloud:
     function:
       # Definiamo quali funzioni devono essere caricate e rese disponibili
       # È possibile concatenarle con pipe (|) o elencarle separate da punto e virgola
       definition: email|sms
     stream:
+      function:
+        bindings:
+          email|sms-in-0: input
+          email|sms-out-0: output
       bindings:
-        emailsms-in-0:
+        input:
           destination: send-communication
           group: ${spring.application.name}
-        emailsms-out-0:
+          contentType: application/json
+        output:
           destination: communication-sent
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-    connection-timeout: 10s
+          contentType: application/json
+      kafka:
+        binder:
+          brokers: ${SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS:localhost:9092}
+          configuration:
+            reconnect.backoff.ms: 1000
+            reconnect.backoff.max.ms: 10000
+            request.timeout.ms: 30000
+        bindings:
+          input:
+            consumer:
+              auto-offset-reset: earliest
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eurekaserver:8070/eureka/}
+
+# Riduce il rumore di log generato dal client Kafka quando il broker non è raggiungibile
+# Questo evita flood di messaggi INFO ripetuti da AdminMetadataManager.
+logging:
+  level:
+    root: INFO
+    org.apache.kafka: WARN
+    org.springframework.cloud.stream: DEBUG
+    org.springframework.integration: DEBUG
+    com.springmicroservices.message: DEBUG
+    # Se vuoi ancora più silenzio per altri componenti Kafka:
+    # org.apache.kafka.clients.consumer.internals.Fetcher: ERROR

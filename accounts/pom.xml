@@ -5,33 +5,24 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.6</version>
+        <version>3.4.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.spring-microservices</groupId>
+
+    <groupId>com.springmicroservices</groupId>
     <artifactId>accounts</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>accounts</name>
     <description>accounts</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+
     <properties>
-        <java.version>17</java.version>
-        <spring-cloud.version>2025.0.0</spring-cloud.version>
+        <java.version>21</java.version>
+        <spring-cloud.version>2024.0.0</spring-cloud.version>
         <otelVersion>2.12.0</otelVersion>
+        <start-class>com.springmicroservices.accounts.AccountsApplication</start-class>
     </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -43,6 +34,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -80,7 +72,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-stream-binder-rabbit</artifactId>
+            <artifactId>spring-cloud-stream-binder-kafka</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -126,6 +118,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -148,11 +141,12 @@
                 <version>3.4.2</version>
                 <configuration>
                     <to>
-                        <image>rumadev/${project.artifactId}:s13</image>
+                        <image>rumadev/${project.artifactId}:s14</image>
                     </to>
                     <container>
+                        <mainClass>${start-class}</mainClass>
                         <jvmFlags>
-                            <jvmFlag>-javaagent:/app/resources/opentelemetry-javaagent-2.12.0.jar</jvmFlag>
+                            <jvmFlag>-javaagent:/app/resources/opentelemetry-javaagent-${otelVersion}.jar</jvmFlag>
                         </jvmFlags>
                     </container>
                     <extraDirectories>
@@ -171,7 +165,7 @@
                 <executions>
                     <execution>
                         <id>copy-otel-agent</id>
-                        <phase>prepare-package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>

@@ -7,13 +7,13 @@ spring:
   profiles:
     active: "prod"
   config:
-    import: "optional:configserver:http://configserver:8071"
+    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://configserver:8071}
   cloud:
     openfeign:
       circuitbreaker:
         enabled: true
     function:
-      definition: updateCommunication # Stesso nome del nome della function
+      definition: updateCommunication
     stream:
       bindings:
         updateCommunication-in-0:
@@ -21,6 +21,17 @@ spring:
           group: ${spring.application.name}
         sendCommunication-out-0:
           destination: send-communication
+      kafka:
+        binder:
+          brokers: ${SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS:kafka:9092}
+          configuration:
+            max.block.ms: 3000
+            request.timeout.ms: 3000
+          bindings:
+            updateCommunication-in-0:
+              consumer:
+                auto-offset-reset: earliest
+
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
@@ -37,21 +48,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  sql: # Carica in automatico il file ./schema.sql
+  sql:
     init:
       mode: always
-  logging:
-    level:
-      root: INFO
-      org.springframework.web: DEBUG
-      com.example.accounts: DEBUG
-      com.netflix.discovery: DEBUG
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-    connection-timeout: 10s
 
 management:
   endpoints:
@@ -62,20 +61,16 @@ management:
   endpoint:
     shutdown:
       access: unrestricted
-      health:
-        probes:
-          enabled: true
+    health:
+      show-details: always
   health:
-    readiness-state:
+    readinessstate:
       enabled: true
-    liveness-state:
+    livenessstate:
       enabled: true
-  info:
-    env:
-      enabled: true
-  metrics:
-    tags:
-      application: ${spring.application.name}
+    # Disabilita il fallimento globale dello stato di salute se Kafka è momentaneamente irraggiungibile
+    kafka:
+      enabled: false
 
 eureka:
   instance:
@@ -94,7 +89,11 @@ info:
 
 logging:
   level:
+    root: INFO
     com.springmicroservices.accounts: DEBUG
+    org.springframework.web: DEBUG
+    com.netflix.discovery: DEBUG
+    org.springframework.cloud.stream: DEBUG
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
@@ -117,8 +116,6 @@ resilience4j.retry:
       waitDuration: 500
       enableExponentialBackoff: true
       exponentialBackoffMultiplier: 2
-      # ignoreExceptions:
-      #  - java.lang.NullPointerException
       retryExceptions:
         - java.util.concurrent.TimeoutException
 

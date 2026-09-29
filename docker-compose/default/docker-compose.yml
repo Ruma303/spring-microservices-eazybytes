@@ -3,20 +3,33 @@ networks:
     driver: bridge
 
 services:
-
-  rabbit:
-    image: rabbitmq:4-management
-    container_name: rabbitmq-ms
-    hostname: rabbitmq_ms
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-ms
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093,PLAINTEXT_HOST://0.0.0.0:29092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
-      interval: 15s
+      test: [ "CMD-SHELL", "kafka-broker-api-versions --bootstrap-server kafka:9092 || exit 1" ]
+      interval: 10s
       timeout: 10s
-      retries: 10
-      start_period: 20s
+      retries: 5
+      start_period: 15s
     extends:
       file: common-config.yml
       service: network-deploy-service
@@ -270,7 +283,7 @@ services:
       service: network-deploy-service
 
   configserver:
-    image: "rumadev/configserver:s13"
+    image: "rumadev/configserver:s14"
     container_name: configserver-ms
     platform: linux/amd64
     dns:
@@ -289,17 +302,20 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 180s
+      start_period: 15s
     extends:
       file: common-config.yml
       service: microservice-base-config
 
   eurekaserver:
-    image: "rumadev/eurekaserver:s13"
+    image: "rumadev/eurekaserver:s14"
     container_name: eurekaserver-ms
     platform: linux/amd64
     ports:
       - "8070:8070"
+    depends_on:
+      configserver:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "eurekaserver"
       OTEL_SERVICE_NAME: "eurekaserver"
@@ -308,23 +324,27 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 180s
+      start_period: 15s
     extends:
       file: common-config.yml
       service: microservice-base-config
 
   accounts:
-    image: "rumadev/accounts:s13"
+    image: "rumadev/accounts:s14"
     container_name: accounts-ms
     platform: linux/amd64
     depends_on:
-      rabbit:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "accounts"
       OTEL_SERVICE_NAME: "accounts"
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0"
-      SPRING_RABBITMQ_HOST: "rabbit"
+      SPRING_CLOUD_STREAM_KAFKA_BIBNDER_BROKERS: "kafka:29092"
     deploy:
       resources:
         limits:
@@ -335,19 +355,27 @@ services:
       interval: 20s
       timeout: 5s
       retries: 10
-      start_period: 180s
+      start_period: 30s
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   cards:
-    image: "rumadev/cards:s13"
+    image: "rumadev/cards:s14"
     container_name: cards-ms
     platform: linux/amd64
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "cards"
       OTEL_SERVICE_NAME: "cards"
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0"
+      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: "kafka:29092"
     deploy:
       resources:
         limits:
@@ -358,19 +386,27 @@ services:
       interval: 20s
       timeout: 5s
       retries: 10
-      start_period: 180s
+      start_period: 30s
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   loans:
-    image: "rumadev/loans:s13"
+    image: "rumadev/loans:s14"
     container_name: loans-ms
     platform: linux/amd64
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "loans"
       OTEL_SERVICE_NAME: "loans"
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0"
+      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: "kafka:29092"
     deploy:
       resources:
         limits:
@@ -381,25 +417,37 @@ services:
       interval: 20s
       timeout: 5s
       retries: 10
-      start_period: 180s
+      start_period: 30s
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   message:
-    image: "rumadev/message:s13"
+    image: "rumadev/message:s14"
     container_name: message-ms
     depends_on:
-      rabbit:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
     environment:
-      SPRING_RABBITMQ_HOST: "rabbit"
+      SPRING_APPLICATION_NAME: "message"
+      OTEL_SERVICE_NAME: "message"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0"
+      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: "kafka:29092"
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+          cpus: "1.0"
     extends:
       file: common-config.yml
       service: network-deploy-service
 
   gatewayserver:
-    image: "rumadev/gatewayserver:s13"
+    image: "rumadev/gatewayserver:s14"
     container_name: gatewayserver-ms
     platform: linux/amd64
     ports:
@@ -413,6 +461,8 @@ services:
         condition: service_healthy
       eurekaserver:
         condition: service_healthy
+      keycloak:
+        condition: service_started
       accounts:
         condition: service_healthy
       cards:
@@ -424,7 +474,7 @@ services:
       interval: 20s
       timeout: 5s
       retries: 10
-      start_period: 180s
+      start_period: 30s
     extends:
       file: common-config.yml
       service: microservice-configserver-config

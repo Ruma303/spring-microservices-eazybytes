@@ -1,0 +1,30 @@
+services:
+  kafka:
+    image: apache/kafka:4.2.1-rc5
+    container_name: ${KAFKA_CONTAINER_NAME}
+    restart: unless-stopped
+    ports:
+      - "${KAFKA_HOST_PORT}:9092"
+    environment:
+      # Configurazione base del Server KRaft
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@localhost:9093"
+
+      # Gestione dei Listener (Chi ascolta e dove)
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_LOG_DIRS: "/var/lib/kafka/data"
+
+      # Mappatura dei nomi per consentire le connessioni esterne da localhost
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092"
+
+      # Criteri di sicurezza minimi per lo studio locale
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+
+      # Cluster ID richiesto da KRaft (generato come stringa casuale base64)
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+    volumes:
+      # Bind Mount sulla cartella che hai richiesto
+      - ${KAFKA_DATA_VOLUME}:/var/lib/kafka/data

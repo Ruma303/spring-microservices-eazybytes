@@ -5,20 +5,17 @@ spring:
   application:
     name: "gatewayserver"
   config:
-    import: "optional:configserver:http://localhost:8071/"
+    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://configserver:8071}
   cloud:
     gateway:
-      server:
-        webflux:
-          discovery:
-            locator:
-              enabled: true
-              lowerCaseServiceId: true
-          httpclient:
-              connect-timeout: 1000             # OK, handshake TCP max 1 secondo
-              response-timeout: 30s             # ora attende fino a 30 secondi per la risposta HTTP
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+      httpclient:
+        connect-timeout: 1000
+        response-timeout: 30s
 
-  # Redis
   data:
     redis:
       connect-timeout: ${SPRING_DATA_REDIS_CONNECTION_TIMEOUT:2s}
@@ -44,9 +41,9 @@ management:
   endpoint:
     shutdown:
       access: unrestricted
-      health:
-        probes:
-          enabled: true
+    health:
+      probes:
+        enabled: true
   health:
     readiness-state:
       enabled: true
@@ -76,8 +73,10 @@ info:
 
 logging:
   level:
+    root: INFO
     org.springframework.security: DEBUG
-    com.springmicroservices.accounts: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: INFO
 
 resilience4j.circuitbreaker:
   configs:
@@ -86,7 +85,7 @@ resilience4j.circuitbreaker:
       permittedNumberOfCallsInHalfOpenState: 2
       failureRateThreshold: 50
       waitDurationInOpenState: 10000
-      slowCallDurationThreshold: 25s   # esempio, inferiore al response-timeout gateway
+      slowCallDurationThreshold: 25s
 
 resilience4j.retry:
   configs:

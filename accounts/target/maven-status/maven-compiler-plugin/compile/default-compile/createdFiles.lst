@@ -18,10 +18,10 @@ com/springmicroservices/accounts/service/impl/CustomerServiceImpl.class
 com/springmicroservices/accounts/dto/AccountsContactInfoResponse.class
 com/springmicroservices/accounts/service/client/CardsFeignClient.class
 com/springmicroservices/accounts/service/client/LoansFeignClient.class
-com/springmicroservices/accounts/dto/ResponseDto.class
 com/springmicroservices/accounts/dto/AccountsDto.class
-com/springmicroservices/accounts/controllers/CustomerController.class
+com/springmicroservices/accounts/dto/ResponseDto.class
 com/springmicroservices/accounts/repository/AccountsRepository.class
+com/springmicroservices/accounts/controllers/CustomerController.class
 com/springmicroservices/accounts/dto/LoansDto.class
 com/springmicroservices/accounts/entity/Customer.class
 com/springmicroservices/accounts/service/impl/AccountsServiceImpl.class
